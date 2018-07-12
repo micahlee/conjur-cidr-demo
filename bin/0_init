@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "Fetching latest container images..."
+docker-compose pull
+
+if [ ! -f data_key ]; then
+    echo "Generating Conjur data key..."
+    docker-compose run --no-deps --rm conjur data-key generate > data_key
+fi

@@ -1,0 +1,10 @@
+- !user
+  id: alice
+  restricted_to: 172.22.200.0/24
+
+- !variable password
+
+- !permit
+  resource: !variable password
+  privileges: [read]
+  roles: !user alice

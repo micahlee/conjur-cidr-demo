@@ -1,0 +1,5 @@
+#!/bin/bash -eu
+
+docker-compose exec admin conjur init -u conjur -a demo
+docker-compose exec admin conjur authn login -u admin
+docker-compose exec admin conjur policy load root /opt/policy/restricted_to.yaml > alice_info

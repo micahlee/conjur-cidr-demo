@@ -1,0 +1,13 @@
+#!/bin/bash -eu
+
+export CONJUR_DATA_KEY="$(< data_key)"
+
+echo "Starting Conjur service..."
+docker-compose up -d
+
+echo "Creating demo account \"cdir-demo\"..."
+docker-compose exec conjur conjurctl account create demo > admin_info
+
+echo "Installing network tools in client containers..."
+docker-compose exec good bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -qq net-tools < /dev/null > /dev/null"
+docker-compose exec bad bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -qq net-tools < /dev/null > /dev/null"

@@ -1,0 +1,52 @@
+version: "3"
+services:
+  database:
+    image: postgres:9.3
+
+  conjur:
+    image: cyberark/conjur
+    command: server
+    environment:
+      DATABASE_URL: postgres://postgres@database/postgres
+      CONJUR_DATA_KEY:
+    depends_on: [ database ]
+    ports:
+      - "8080:80"
+
+  admin:
+    image: conjurinc/cli5
+    depends_on: [ conjur ]
+    entrypoint: sleep
+    command: infinity
+    volumes:
+      - ./policy:/opt/policy
+    environment:
+      CONJUR_APPLIANCE_URL: http://conjur   
+
+  bad:
+    image: conjurinc/cli5
+    depends_on: [ conjur ]
+    entrypoint: sleep
+    command: infinity
+    environment:
+      CONJUR_APPLIANCE_URL: http://conjur
+    networks:
+      default:
+        ipv4_address: 172.22.100.1
+
+  good:
+    image: conjurinc/cli5
+    depends_on: [ conjur ]
+    entrypoint: sleep
+    command: infinity
+    environment:
+      CONJUR_APPLIANCE_URL: http://conjur
+    networks:
+      default:
+        ipv4_address: 172.22.200.2
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.22.0.0/16

@@ -1,0 +1,16 @@
+#!/bin/bash -eu
+
+# $1 is the service, "good" or "bad"
+
+docker-compose exec $1 conjur init -u conjur -a demo
+docker-compose exec $1 conjur authn login -u alice
+echo ""
+
+echo "Network configuration:"
+echo "---------------------------------------------------"
+docker-compose exec $1 bash -c "ifconfig eth0 | grep 'inet addr'"
+echo ""
+
+echo "Conjur response:"
+echo "---------------------------------------------------"
+docker-compose exec $1 conjur show demo:variable:password
